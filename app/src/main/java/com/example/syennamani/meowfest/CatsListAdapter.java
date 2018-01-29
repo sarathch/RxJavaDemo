@@ -17,12 +17,20 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.annotations.Nullable;
 
 public class CatsListAdapter extends RecyclerView.Adapter<CatsListAdapter.MyViewHolder> {
 
-    private List<Cats> catsList;
+    private List<Cats> catsList = new ArrayList<>();
     private Context context;
+
+    public void setCatsList(@Nullable  List<Cats> catsList) {
+        this.catsList = catsList;
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, timestamp, description ;
         public ImageView image_cats;
@@ -34,11 +42,6 @@ public class CatsListAdapter extends RecyclerView.Adapter<CatsListAdapter.MyView
             description = (TextView) view.findViewById(R.id.description);
             image_cats = view.findViewById(R.id.iv_cat);
         }
-    }
-
-
-    public CatsListAdapter(List<Cats> catsList) {
-        this.catsList = catsList;
     }
 
     @Override

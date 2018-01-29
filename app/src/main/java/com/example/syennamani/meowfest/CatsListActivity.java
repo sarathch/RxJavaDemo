@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import rx.Observer;
+import rx.Subscription;
+
 public class CatsListActivity extends AppCompatActivity {
+    private static final String TAG = CatsListActivity.class.getSimpleName();
     private List<Cats> catsList = new ArrayList<>();
     private RecyclerView recyclerView;
     private CatsListAdapter mAdapter;
@@ -34,6 +41,7 @@ public class CatsListActivity extends AppCompatActivity {
     private boolean mIsLoading = false, hasMorePages = true;
     private boolean isRefreshing=false;
     private RelativeLayout progressLayout;
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +74,35 @@ public class CatsListActivity extends AppCompatActivity {
         };
         // Adds the scroll listener to RecyclerView
         recyclerView.addOnScrollListener(mScrollListener);
+    }
+
+    @Override protected void onDestroy() {
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+        }
+        super.onDestroy();
+    }
+
+    private void getCatsData() {
+        subscription = WebClient.getInstance()
+                .getCatsDataToClient(""+offset)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Cats>>() {
+                    @Override public void onCompleted() {
+                        Log.d(TAG, "In onCompleted()");
+                    }
+
+                    @Override public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "In onError()");
+                    }
+
+                    @Override public void onNext(List<Cats> catsList) {
+                        Log.d(TAG, "In onNext()");
+                        mAdapter.setCatsList(catsList);
+                    }
+                });
     }
 
     // Append the next page of data into the adapter
