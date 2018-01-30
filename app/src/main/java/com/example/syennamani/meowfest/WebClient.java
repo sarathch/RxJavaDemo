@@ -30,14 +30,6 @@ public class WebClient {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-
-        /*return new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(createOkHttpClient())
-                .build();*/
-
         webService = retrofit.create(WebService.class);
     }
 

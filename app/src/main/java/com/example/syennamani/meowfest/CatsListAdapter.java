@@ -4,9 +4,6 @@ package com.example.syennamani.meowfest;
  * Created by syennamani on 1/24/2018.
  */
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-
-import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.reactivex.annotations.Nullable;
@@ -61,6 +60,14 @@ public class CatsListAdapter extends RecyclerView.Adapter<CatsListAdapter.MyView
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Cats cats = catsList.get(position);
         holder.title.setText(cats.getTitle());
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        SimpleDateFormat targetFormat = new SimpleDateFormat("MM-dd-yyyy");
+        try {
+            Date date = formatter.parse(cats.getTimestamp());
+            cats.setTimestamp(targetFormat.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         holder.timestamp.setText(cats.getTimestamp());
         holder.description.setText(cats.getDescription());
         Picasso.with(context).load(cats.getImage_url()).into(holder.image_cats);

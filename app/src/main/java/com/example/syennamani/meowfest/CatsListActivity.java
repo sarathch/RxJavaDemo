@@ -33,21 +33,18 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CatsListActivity extends AppCompatActivity {
     private static final String TAG = CatsListActivity.class.getSimpleName();
-    private List<Cats> catsList = new ArrayList<>();
     private RecyclerView recyclerView;
     private CatsListAdapter mAdapter;
     private int offset = 0;
     private boolean mIsLoading = false, hasMorePages = true;
     private boolean isRefreshing=false;
     private RelativeLayout progressLayout;
-    //private Subscription subscription;
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cats_list);
-        //loadNextDataFromApi();
         getCatsData();
         mAdapter = new CatsListAdapter();
         recyclerView = findViewById(R.id.recycler_view);
@@ -67,7 +64,7 @@ public class CatsListActivity extends AppCompatActivity {
                     mIsLoading = true;
                     if(hasMorePages && !isRefreshing) {
                         progressLayout.setVisibility(View.VISIBLE);
-                        //loadNextDataFromApi();
+                        offset++;
                         getCatsData();
                     }
                 }else
@@ -79,34 +76,10 @@ public class CatsListActivity extends AppCompatActivity {
     }
 
     @Override protected void onDestroy() {
-        /*if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
-        }*/
         mCompositeDisposable.clear();
         super.onDestroy();
     }
 
-/*    private void getCatsData() {
-        subscription = WebClient.getInstance()
-                .getCatsDataToClient(""+offset)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Cats>>() {
-                    @Override public void onCompleted() {
-                        Log.d(TAG, "In onCompleted()");
-                    }
-
-                    @Override public void onError(Throwable e) {
-                        e.printStackTrace();
-                        Log.d(TAG, "In onError()");
-                    }
-
-                    @Override public void onNext(List<Cats> catsList) {
-                        Log.d(TAG, "In onNext()");
-                        mAdapter.setCatsList(catsList);
-                    }
-                });
-    }*/
     private void getCatsData() {
         WebClient.getInstance()
                 .getCatsDataToClient(""+offset)
@@ -136,48 +109,4 @@ public class CatsListActivity extends AppCompatActivity {
                 });
     }
 
-/*    // Append the next page of data into the adapter
-    public void loadNextDataFromApi() {
-        String url = "https://chex-triplebyte.herokuapp.com/api/cats?page="+offset;
-        Log.v("CATS JSON LIST URL", url);
-        isRefreshing = true;
-        FetchJson fetchJson = (FetchJson) new FetchJson(new FetchJson.AsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-
-                int positionStart = catsList.size();
-                JSONArray jsonarray = null;
-                try {
-                    jsonarray = new JSONArray(output);
-                    if(jsonarray.length() == 0) hasMorePages =false;
-                    for (int i = 0; i < jsonarray.length(); i++) {
-                        Cats cat = new Cats();
-                        JSONObject jsonobject = jsonarray.getJSONObject(i);
-                        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
-                        SimpleDateFormat targetFormat = new SimpleDateFormat("MM-dd-yyyy");
-                        try {
-                            Date date = formatter.parse(jsonobject.getString("timestamp"));
-                            cat.setTimestamp(targetFormat.format(date));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                            cat.setTimestamp("");
-                        }
-                        cat.setImage_url(jsonobject.getString("image_url"));
-                        cat.setTitle(jsonobject.getString("title"));
-                        cat.setDescription(jsonobject.getString("description"));
-                        catsList.add(cat);
-                    }
-
-                    mAdapter.notifyItemRangeInserted(positionStart,jsonarray.length());
-                    if(hasMorePages) {
-                        offset++;
-                        isRefreshing = false;
-                    }
-                    progressLayout.setVisibility(View.GONE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).execute(url);
-    }*/
 }
