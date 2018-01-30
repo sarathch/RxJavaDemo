@@ -29,7 +29,6 @@ public class CatsListAdapter extends RecyclerView.Adapter<CatsListAdapter.MyView
     public void setCatsList(@Nullable  List<Cats> currCatsList) {
         if(catsList == null)
             return;
-        catsList.clear();
         catsList.addAll(currCatsList);
         notifyDataSetChanged();
     }

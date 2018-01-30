@@ -95,6 +95,7 @@ public class CatsListActivity extends AppCompatActivity {
                     public void onNext(List<Cats> catsList) {
                         Log.d("RX2","Result Size : "+catsList.size());
                         mAdapter.setCatsList(catsList);
+                        progressLayout.setVisibility(View.GONE);
                     }
 
                     @Override
