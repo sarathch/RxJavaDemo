@@ -11,6 +11,14 @@ import retrofit2.http.Path;
  */
 
 public interface WebService {
-    @GET("{offset}")
+    /*@GET("data/2.5/weather")
+    Single<WeatherResponse> queryWeatherByCityName(@Query("q") String query,
+                                                   @Query("APPID") String appId);*/
+
+
+    @GET("cats?page={offset}")
     Observable<List<Cats>> getCatsData(@Path("offset") String offset);
+
+
+
 }

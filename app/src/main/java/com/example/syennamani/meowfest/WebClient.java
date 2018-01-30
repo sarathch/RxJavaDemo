@@ -7,10 +7,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.List;
-
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import io.reactivex.Observable;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -18,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class WebClient {
-    private static final String CATS_BASE_URL = "https://chex-triplebyte.herokuapp.com/api/cats?page=";
+    private static final String CATS_BASE_URL = "https://chex-triplebyte.herokuapp.com/api/";
 
     private static WebClient instance;
     private WebService webService;
@@ -27,9 +26,18 @@ public class WebClient {
         final Gson gson =
                 new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
         final Retrofit retrofit = new Retrofit.Builder().baseUrl(CATS_BASE_URL)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
+
+
+        /*return new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(createOkHttpClient())
+                .build();*/
+
         webService = retrofit.create(WebService.class);
     }
 

@@ -27,8 +27,12 @@ public class CatsListAdapter extends RecyclerView.Adapter<CatsListAdapter.MyView
     private List<Cats> catsList = new ArrayList<>();
     private Context context;
 
-    public void setCatsList(@Nullable  List<Cats> catsList) {
-        this.catsList = catsList;
+    public void setCatsList(@Nullable  List<Cats> currCatsList) {
+        if(catsList == null)
+            return;
+        catsList.clear();
+        catsList.addAll(currCatsList);
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

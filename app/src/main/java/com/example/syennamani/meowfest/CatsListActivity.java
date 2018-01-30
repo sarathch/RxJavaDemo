@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import io.reactivex.disposables.CompositeDisposable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,9 +28,8 @@ import java.util.Date;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import rx.Observer;
-import rx.Subscription;
 
 public class CatsListActivity extends AppCompatActivity {
     private static final String TAG = CatsListActivity.class.getSimpleName();
@@ -41,14 +40,16 @@ public class CatsListActivity extends AppCompatActivity {
     private boolean mIsLoading = false, hasMorePages = true;
     private boolean isRefreshing=false;
     private RelativeLayout progressLayout;
-    private Subscription subscription;
+    //private Subscription subscription;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cats_list);
-        loadNextDataFromApi();
-        mAdapter = new CatsListAdapter(catsList);
+        //loadNextDataFromApi();
+        getCatsData();
+        mAdapter = new CatsListAdapter();
         recyclerView = findViewById(R.id.recycler_view);
         progressLayout = findViewById(R.id.progress);
         final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -66,7 +67,8 @@ public class CatsListActivity extends AppCompatActivity {
                     mIsLoading = true;
                     if(hasMorePages && !isRefreshing) {
                         progressLayout.setVisibility(View.VISIBLE);
-                        loadNextDataFromApi();
+                        //loadNextDataFromApi();
+                        getCatsData();
                     }
                 }else
                     mIsLoading = false;
@@ -77,13 +79,14 @@ public class CatsListActivity extends AppCompatActivity {
     }
 
     @Override protected void onDestroy() {
-        if (subscription != null && !subscription.isUnsubscribed()) {
+        /*if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
-        }
+        }*/
+        mCompositeDisposable.clear();
         super.onDestroy();
     }
 
-    private void getCatsData() {
+/*    private void getCatsData() {
         subscription = WebClient.getInstance()
                 .getCatsDataToClient(""+offset)
                 .subscribeOn(Schedulers.io())
@@ -103,9 +106,37 @@ public class CatsListActivity extends AppCompatActivity {
                         mAdapter.setCatsList(catsList);
                     }
                 });
+    }*/
+    private void getCatsData() {
+        WebClient.getInstance()
+                .getCatsDataToClient(""+offset)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new io.reactivex.Observer<List<Cats>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mCompositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(List<Cats> catsList) {
+                        Log.d("RX2","Result Size : "+catsList.size());
+                        mAdapter.setCatsList(catsList);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
-    // Append the next page of data into the adapter
+/*    // Append the next page of data into the adapter
     public void loadNextDataFromApi() {
         String url = "https://chex-triplebyte.herokuapp.com/api/cats?page="+offset;
         Log.v("CATS JSON LIST URL", url);
@@ -148,5 +179,5 @@ public class CatsListActivity extends AppCompatActivity {
                 }
             }
         }).execute(url);
-    }
+    }*/
 }
