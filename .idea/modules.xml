@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MeowFestRxJava.iml" filepath="$PROJECT_DIR$/MeowFestRxJava.iml" />
-      <module fileurl="file://E:\GitHubLibCodeBase\RxJavaDemo\MeowFestRxJava.iml" filepath="E:\GitHubLibCodeBase\RxJavaDemo\MeowFestRxJava.iml" />
-      <module fileurl="file://C:\Users\syennamani\StudioProjects\MeowFestRxJava\RxJavaDemo.iml" filepath="C:\Users\syennamani\StudioProjects\MeowFestRxJava\RxJavaDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

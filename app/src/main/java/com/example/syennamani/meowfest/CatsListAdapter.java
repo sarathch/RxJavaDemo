@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.annotations.Nullable;
 
@@ -59,8 +60,8 @@ public class CatsListAdapter extends RecyclerView.Adapter<CatsListAdapter.MyView
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Cats cats = catsList.get(position);
         holder.title.setText(cats.getTitle());
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
-        SimpleDateFormat targetFormat = new SimpleDateFormat("MM-dd-yyyy");
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'", Locale.US);
+        SimpleDateFormat targetFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
         try {
             Date date = formatter.parse(cats.getTimestamp());
             cats.setTimestamp(targetFormat.format(date));
